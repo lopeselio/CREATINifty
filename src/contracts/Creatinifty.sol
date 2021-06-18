@@ -47,7 +47,11 @@ contract Creatinifty {
   }
 
   function tipImageOwner(uint _id) public payable {
-    Image memory _image = images[_id]; 
+    // Make sure the id is valid
+    require(_id > 0 && _id <= imageCount);
+    // Fetch the image
+    Image memory _image = images[_id];
+    // Fetch author
     address payable _author = _image.author;
     // transfer crypto to author
     payable(address(_author)).transfer(msg.value);
