@@ -3,43 +3,88 @@ import React, { Component } from 'react';
 import Identicon from 'identicon.js';
 import Navbar from './Navbar'
 import Main from './Main'
-import Web3 from 'web3';
-import './App.css';
-
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
+// const Web3 = require("web3")
+// const Web3 = require('web3')
+// const ContractKit = require('@celo/contractkit')
+// const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
+let Web3 = require("web3")
+let ContractKit = require("@celo/contractkit")
+let BigNumber = require("bignumber.js")
+let erc20Abi = require("../abis/erc20Abi.json")
+
+const ERC20_DECIMALS = 18
+const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
+
+let kit
+let cUSDcontract
+
+let anAddress = '0xD86518b29BB52a5DAC5991eACf09481CE4B0710d'
+let amount = "10000000000000000"
+
+
+
+
+
 
 class App extends Component {
-
+  
   async componentWillMount() {
     await this.loadWeb3()
     await this.loadBlockchainData()
   }
 
+  async connectCeloWallet() {
+    if (window.celo) {
+      try {
+        await window.celo.enable()
+  
+        const web3 = new Web3(window.celo)
+        kit = ContractKit.newKitFromWeb3(web3)
+  
+        const accounts = await kit.web3.eth.getAccounts()
+        kit.defaultAccount = accounts[0]
+  
+        cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
+        
+        getBalance()
+      } catch (error) {
+        console.log(`⚠️ ${error}.`)
+      }
+    } else {
+      console.log("⚠️ Please install the CeloExtensionWallet.")
+    }
+  }
+
   async loadWeb3() {
-    if (window.ethereum) {
-      window.web3 = new Web3(window.ethereum)
-      await window.ethereum.enable()
+    if (window.celo) {
+      window.web3 = new Web3(window.celo)
+      await window.celo.enable()
     }
     else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider)
     }
     else {
-      window.alert('Non-Ethereum browser detected. You should consider trying MetaMask!')
+      window.alert('Non-Ethereum browser detected. You should consider trying celo Extension wallet!')
     }
   }
 
   async loadBlockchainData() {
     const web3 = window.web3
     // Load account
-    const accounts = await web3.eth.getAccounts()
-    this.setState({ account: accounts[0] })
+    kit = ContractKit.newKitFromWeb3(web3)
+    const accounts = await kit.web3.eth.getAccounts()
+    kit.defaultAccount = accounts[0]
+    this.setState({ account: kit.defaultAccount })
     // Network ID
     const networkId = await web3.eth.net.getId()
     const networkData = Creatinifty.networks[networkId]
     if(networkData) {
-      const creatinifty = new web3.eth.Contract(Creatinifty.abi, networkData.address)
+      cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
+      getBalance()
+      const creatinifty = new kit.web3.eth.Contract(Creatinifty.abi, networkData.address)
       this.setState({ creatinifty })
       const imagesCount = await creatinifty.methods.imageCount().call()
       this.setState({ imagesCount })
@@ -59,6 +104,51 @@ class App extends Component {
       window.alert('Creatinifty contract not deployed to detected network.')
     }
   }
+
+  async getBalance() {
+    const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
+    const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
+    document.querySelector("#balance").textContent = cUSDBalance
+  }
+
+  async send() {
+    const result = await cUSDcontract.methods
+      .transfer(anAddress, amount)
+      .send({ from: kit.defaultAccount })
+    getBalance()
+    showTxHash(result.transactionHash) 
+    return result
+  }
+
+  // async loadBlockchainData() {
+  //   const web3 = window.web3
+  //   // Load account
+  //   const accounts = await web3.eth.getAccounts()
+  //   this.setState({ account: accounts[0] })
+  //   // Network ID
+  //   const networkId = await web3.eth.net.getId()
+  //   const networkData = Creatinifty.networks[networkId]
+  //   if(networkData) {
+  //     const creatinifty = new web3.eth.Contract(Creatinifty.abi, networkData.address)
+  //     this.setState({ creatinifty })
+  //     const imagesCount = await creatinifty.methods.imageCount().call()
+  //     this.setState({ imagesCount })
+  //     // Load images
+  //     for (var i = 1; i <= imagesCount; i++) {
+  //       const image = await creatinifty.methods.images(i).call()
+  //       this.setState({
+  //         images: [...this.state.images, image]
+  //       })
+  //     }
+  //     // Sort images. Show highest tipped images first
+  //     this.setState({
+  //       images: this.state.images.sort((a,b) => b.tipAmount - a.tipAmount )
+  //     })
+  //     this.setState({ loading: false})
+  //   } else {
+  //     window.alert('Creatinifty contract not deployed to detected network.')
+  //   }
+  // }
 
   captureFile = event => {
 
