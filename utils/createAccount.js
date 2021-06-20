@@ -1,8 +1,8 @@
-const getAccount = require('./getAccount').getAccount
+// const getAccount = require('./getAccount').getAccount
 
-async function awaitWrapper(){
-    let account = await getAccount()
-    console.log(`Account address: ${account.address}`)
-}
+// async function awaitWrapper(){
+//     let account = await getAccount()
+//     console.log(`Account address: ${account.address}`)
+// }
 
-awaitWrapper()
+// awaitWrapper()

@@ -6,7 +6,9 @@ import Main from './Main'
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
-
+// const Web3 = require("web3")
+// const Web3 = require('web3')
+// const ContractKit = require('@celo/contractkit')
 // const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
 let Web3 = require("web3")
 let ContractKit = require("@celo/contractkit")
@@ -23,15 +25,26 @@ let anAddress = '0xD86518b29BB52a5DAC5991eACf09481CE4B0710d'
 let amount = "10000000000000000"
 
 
-
-
-
-
 class App extends Component {
+
+  constructor(props) {
+    super(props)
+    this.state = {
+      account: '',
+      creatinifty: null,
+      images: [],
+      loading: true
+    }
+
+    this.uploadImage = this.uploadImage.bind(this)
+    this.tipImageOwner = this.tipImageOwner.bind(this)
+    this.captureFile = this.captureFile.bind(this)
+  }
   
   async componentWillMount() {
     await this.connectCeloWallet()
-    // await this.loadBlockchainData()
+    await this.loadWeb3()
+    await this.loadBlockchainData()
   }
 
   async connectCeloWallet() {
@@ -39,16 +52,17 @@ class App extends Component {
       try {
         await window.celo.enable()
   
-        const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
-        console.log(web3)
+        const web3 = new Web3(window.celo)
         kit = ContractKit.newKitFromWeb3(web3)
-        console.log(kit)
+        console.log(web3)
+        console.log("Hello")
   
         const accounts = await kit.web3.eth.getAccounts()
         kit.defaultAccount = accounts[0]
-        console.log(kit.defaultAccount)
+        console.log(accounts[0])
   
         cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
+        console.log(cUSDcontract)
         
         // getBalance()
       } catch (error) {
@@ -63,24 +77,33 @@ class App extends Component {
     if (window.celo) {
       window.web3 = new Web3(window.celo)
       await window.celo.enable()
+      // console.log("hello")
     }
     else if (window.web3) {
       window.web3 = new Web3(window.web3.currentProvider)
+      console.log("hallo")
     }
     else {
       window.alert('Non-Ethereum browser detected. You should consider trying celo Extension wallet!')
+      console.log("Hello")
     }
   }
 
   async loadBlockchainData() {
     const web3 = window.web3
     // Load account
+    console.log("HE::P")
+    // console.log(ContractKit)
     kit = ContractKit.newKitFromWeb3(web3)
+    // console.log(kit)
     const accounts = await kit.web3.eth.getAccounts()
+    // console.log(accounts)
     kit.defaultAccount = accounts[0]
-    this.setState({ account: kit.defaultAccount })
+    this.setState({ account: accounts[0] })
+    console.log(kit.defaultAccount)
     // Network ID
-    const networkId = await web3.eth.net.getId()
+    const networkId = await kit.web3.eth.net.getId()
+    console.log(networkId)
     const networkData = Creatinifty.networks[networkId]
     if(networkData) {
       cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
@@ -107,6 +130,36 @@ class App extends Component {
   }
 
 
+
+  // async loadBlockchainData() {
+  //   const web3 = window.web3
+  //   // Load account
+  //   const accounts = await web3.eth.getAccounts()
+  //   this.setState({ account: accounts[0] })
+  //   // Network ID
+  //   const networkId = await web3.eth.net.getId()
+  //   const networkData = Creatinifty.networks[networkId]
+  //   if(networkData) {
+  //     const creatinifty = new web3.eth.Contract(Creatinifty.abi, networkData.address)
+  //     this.setState({ creatinifty })
+  //     const imagesCount = await creatinifty.methods.imageCount().call()
+  //     this.setState({ imagesCount })
+  //     // Load images
+  //     for (var i = 1; i <= imagesCount; i++) {
+  //       const image = await creatinifty.methods.images(i).call()
+  //       this.setState({
+  //         images: [...this.state.images, image]
+  //       })
+  //     }
+  //     // Sort images. Show highest tipped images first
+  //     this.setState({
+  //       images: this.state.images.sort((a,b) => b.tipAmount - a.tipAmount )
+  //     })
+  //     this.setState({ loading: false})
+  //   } else {
+  //     window.alert('Creatinifty contract not deployed to detected network.')
+  //   }
+  // }
 
   async getBalance() {
     const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
@@ -161,19 +214,7 @@ class App extends Component {
     })
   }
 
-  constructor(props) {
-    super(props)
-    this.state = {
-      account: '',
-      creatinifty: null,
-      images: [],
-      loading: true
-    }
-
-    this.uploadImage = this.uploadImage.bind(this)
-    this.tipImageOwner = this.tipImageOwner.bind(this)
-    this.captureFile = this.captureFile.bind(this)
-  }
+  
 
   render() {
     return (

@@ -51,7 +51,7 @@ const kit = ContractKit.newKitFromWeb3(web3)
       network_id: 44787
     },
      alfajores_network: {
-       provider: kit.web3.currentProvider, // CeloProvider
+       provider: kit.connection.web3.currentProvider, // CeloProvider
        network_id: 44787                   // latest Alfajores network id
      }
    },
