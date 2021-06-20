@@ -9,16 +9,16 @@
  * truffleframework.com/docs/advanced/configuration
  */
 
- const Kit = require('@celo/contractkit')
- const kit = Kit.newKit('https://alfajores-forno.celo-testnet.org')
+//  const Kit = require('@celo/contractkit')
+//  const kit = Kit.newKit('https://alfajores-forno.celo-testnet.org')
  
- const getAccount = require('./utils/getAccount').getAccount
+//  const getAccount = require('./utils/getAccount').getAccount
  
- async function awaitWrapper(){
-     let account = await getAccount()
-     kit.connection.addAccount(account.privateKey)
- }
- awaitWrapper()
+//  async function awaitWrapper(){
+//      let account = await getAccount()
+//      kit.connection.addAccount(account.privateKey)
+//  }
+//  awaitWrapper()
  
  module.exports = {
    /**
