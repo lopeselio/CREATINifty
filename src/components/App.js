@@ -6,9 +6,7 @@ import Main from './Main'
 //Declare IPFS
 const ipfsClient = require('ipfs-http-client')
 const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' }) // leaving out the arguments will default to these values
-// const Web3 = require("web3")
-// const Web3 = require('web3')
-// const ContractKit = require('@celo/contractkit')
+
 // const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
 let Web3 = require("web3")
 let ContractKit = require("@celo/contractkit")
@@ -109,36 +107,6 @@ class App extends Component {
   }
 
 
-
-  // async loadBlockchainData() {
-  //   const web3 = window.web3
-  //   // Load account
-  //   const accounts = await web3.eth.getAccounts()
-  //   this.setState({ account: accounts[0] })
-  //   // Network ID
-  //   const networkId = await web3.eth.net.getId()
-  //   const networkData = Creatinifty.networks[networkId]
-  //   if(networkData) {
-  //     const creatinifty = new web3.eth.Contract(Creatinifty.abi, networkData.address)
-  //     this.setState({ creatinifty })
-  //     const imagesCount = await creatinifty.methods.imageCount().call()
-  //     this.setState({ imagesCount })
-  //     // Load images
-  //     for (var i = 1; i <= imagesCount; i++) {
-  //       const image = await creatinifty.methods.images(i).call()
-  //       this.setState({
-  //         images: [...this.state.images, image]
-  //       })
-  //     }
-  //     // Sort images. Show highest tipped images first
-  //     this.setState({
-  //       images: this.state.images.sort((a,b) => b.tipAmount - a.tipAmount )
-  //     })
-  //     this.setState({ loading: false})
-  //   } else {
-  //     window.alert('Creatinifty contract not deployed to detected network.')
-  //   }
-  // }
 
   async getBalance() {
     const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
