@@ -32,8 +32,8 @@ let amount = "10000000000000000"
 class App extends Component {
   
   async componentWillMount() {
-    await this.loadWeb3()
-    await this.loadBlockchainData()
+    await this.connectCeloWallet()
+    // await this.loadBlockchainData()
   }
 
   async connectCeloWallet() {
@@ -41,15 +41,18 @@ class App extends Component {
       try {
         await window.celo.enable()
   
-        const web3 = new Web3(window.celo)
+        const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
+        console.log(web3)
         kit = ContractKit.newKitFromWeb3(web3)
+        console.log(kit)
   
         const accounts = await kit.web3.eth.getAccounts()
         kit.defaultAccount = accounts[0]
+        console.log(kit.defaultAccount)
   
         cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
         
-        getBalance()
+        // getBalance()
       } catch (error) {
         console.log(`⚠️ ${error}.`)
       }
@@ -83,7 +86,7 @@ class App extends Component {
     const networkData = Creatinifty.networks[networkId]
     if(networkData) {
       cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
-      getBalance()
+      // getBalance()
       const creatinifty = new kit.web3.eth.Contract(Creatinifty.abi, networkData.address)
       this.setState({ creatinifty })
       const imagesCount = await creatinifty.methods.imageCount().call()
@@ -105,20 +108,7 @@ class App extends Component {
     }
   }
 
-  async getBalance() {
-    const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
-    const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
-    document.querySelector("#balance").textContent = cUSDBalance
-  }
 
-  async send() {
-    const result = await cUSDcontract.methods
-      .transfer(anAddress, amount)
-      .send({ from: kit.defaultAccount })
-    getBalance()
-    showTxHash(result.transactionHash) 
-    return result
-  }
 
   // async loadBlockchainData() {
   //   const web3 = window.web3
@@ -149,6 +139,21 @@ class App extends Component {
   //     window.alert('Creatinifty contract not deployed to detected network.')
   //   }
   // }
+
+  async getBalance() {
+    const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
+    const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
+    document.querySelector("#balance").textContent = cUSDBalance
+  }
+
+  async send() {
+    const result = await cUSDcontract.methods
+      .transfer(anAddress, amount)
+      .send({ from: kit.defaultAccount })
+    // getBalance()
+    // showTxHash(result.transactionHash) 
+    return result
+  }
 
   captureFile = event => {
 
@@ -221,52 +226,3 @@ class App extends Component {
 }
 
 export default App;
-// import React, { Component } from 'react';
-// // import Web3 from 'web3';
-// import Identicon from 'identicon.js';
-// import './App.css';
-// import Creatinifty from '../abis/Creatinifty.json'
-// import Navbar from './Navbar'
-// import Main from './Main'
-
-
-// let Web3 = require("web3")
-// let ContractKit = require("@celo/contractkit")
-// let BigNumber = require("bignumber.js")
-// // let erc20Abi = require("./erc20Abi.json")
-
-// const ERC20_DECIMALS = 18
-// const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1"
-
-// let kit
-// let cUSDcontract
-
-// let anAddress = '0xD86518b29BB52a5DAC5991eACf09481CE4B0710d'
-// let amount = "10000000000000000"
-
-// class App extends Component {
-
-//   constructor(props) {
-//     super(props)
-//     this.state = {
-//       account: '',
-//     }
-//   }
-
-//   render() {
-//     return (
-//       <div>
-//         <Navbar account={this.state.account} />
-//         { this.state.loading
-//           ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
-//           : <Main
-//             // Code...
-//             />
-//           }
-//         }
-//       </div>
-//     );
-//   }
-// }
-
-// export default App;
