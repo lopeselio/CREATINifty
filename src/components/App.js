@@ -10,8 +10,8 @@ const ipfs = ipfsClient({ host: 'ipfs.infura.io', port: 5001, protocol: 'https' 
 // const Web3 = require('web3')
 // const ContractKit = require('@celo/contractkit')
 // const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
-let Web3 = require("web3")
-let ContractKit = require("@celo/contractkit")
+const Web3 = require("web3")
+const ContractKit = require("@celo/contractkit")
 let BigNumber = require("bignumber.js")
 let erc20Abi = require("../abis/erc20Abi.json")
 
@@ -35,17 +35,19 @@ class App extends Component {
       images: [],
       loading: true
     }
-
+    this.connectCeloWallet()
+    this.loadWeb3()
+    this.loadBlockchainData()
     this.uploadImage = this.uploadImage.bind(this)
     this.tipImageOwner = this.tipImageOwner.bind(this)
     this.captureFile = this.captureFile.bind(this)
   }
   
-  async componentWillMount() {
-    await this.connectCeloWallet()
-    await this.loadWeb3()
-    await this.loadBlockchainData()
-  }
+  // async componentWillMount() {
+  //   await this.connectCeloWallet()
+  //   await this.loadWeb3()
+  //   await this.loadBlockchainData()
+  // }
 
   async connectCeloWallet() {
     if (window.celo) {
@@ -54,10 +56,11 @@ class App extends Component {
   
         const web3 = new Web3(window.celo)
         kit = ContractKit.newKitFromWeb3(web3)
-        console.log(web3)
+        console.log(ContractKit)
         console.log("Hello")
   
         const accounts = await kit.web3.eth.getAccounts()
+        console.log(accounts)
         kit.defaultAccount = accounts[0]
         console.log(accounts[0])
   
@@ -221,7 +224,8 @@ class App extends Component {
       <div>
         <Navbar account={this.state.account} />
         { this.state.loading
-          ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
+          ? <div id="loader" className="text-center mt-5"><p>Loading...</p><button onClick={this.connectCeloWallet} type="submit">Submit</button></div>
+          
           : <Main
               images={this.state.images}
               captureFile={this.captureFile}

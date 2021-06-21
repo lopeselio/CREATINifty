@@ -11,8 +11,15 @@
 
 //  const Kit = require('@celo/contractkit')
 //  const kit = Kit.newKit('https://alfajores-forno.celo-testnet.org')
-const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
-const kit = ContractKit.newKitFromWeb3(web3)
+const HDWalletProvider = require('@truffle/hdwallet-provider');
+require('dotenv').config();
+
+const PRIVATE_KEY = process.env.PRIVATE_KEY
+const Url = process.env.RPC_URL
+
+
+// const web3 = new Web3('https://alfajores-forno.celo-testnet.org')
+// const kit = ContractKit.newKitFromWeb3(web3)
  
 //  const getAccount = require('./utils/getAccount').getAccount
  
@@ -51,7 +58,10 @@ const kit = ContractKit.newKitFromWeb3(web3)
       network_id: 44787
     },
      alfajores_network: {
-       provider: kit.connection.web3.currentProvider, // CeloProvider
+      provider: function () {
+        return new HDWalletProvider(PRIVATE_KEY, Url)
+      },
+      //  provider: kit.web3.currentProvider, // CeloProvider
        network_id: 44787                   // latest Alfajores network id
      }
    },
