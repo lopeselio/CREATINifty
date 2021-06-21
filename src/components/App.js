@@ -36,7 +36,7 @@ class App extends Component {
       loading: true
     }
     this.connectCeloWallet()
-    this.loadWeb3()
+    // this.loadWeb3()
     this.loadBlockchainData()
     this.uploadImage = this.uploadImage.bind(this)
     this.tipImageOwner = this.tipImageOwner.bind(this)
@@ -55,17 +55,22 @@ class App extends Component {
         await window.celo.enable()
   
         const web3 = new Web3(window.celo)
+        // console.log(web3)
         kit = ContractKit.newKitFromWeb3(web3)
-        console.log(ContractKit)
-        console.log("Hello")
+        // console.log(kit)
+        // console.log(ContractKit)
+        // console.log("Hello")
   
         const accounts = await kit.web3.eth.getAccounts()
+        this.setState({ account: accounts[0] })
         console.log(accounts)
+        
         kit.defaultAccount = accounts[0]
-        console.log(accounts[0])
+        // console.log(kit.defaultAccount)
+        // console.log(accounts)
   
         cUSDcontract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
-        console.log(cUSDcontract)
+        // console.log(cUSDcontract)
         
         // getBalance()
       } catch (error) {
@@ -76,34 +81,34 @@ class App extends Component {
     }
   }
 
-  async loadWeb3() {
-    if (window.celo) {
-      window.web3 = new Web3(window.celo)
-      await window.celo.enable()
-      // console.log("hello")
-    }
-    else if (window.web3) {
-      window.web3 = new Web3(window.web3.currentProvider)
-      console.log("hallo")
-    }
-    else {
-      window.alert('Non-Ethereum browser detected. You should consider trying celo Extension wallet!')
-      console.log("Hello")
-    }
-  }
+  // async loadWeb3() {
+  //   if (window.celo) {
+  //     window.web3 = new Web3(window.celo)
+  //     await window.celo.enable()
+  //     // console.log("hello")
+  //   }
+  //   else if (window.web3) {
+  //     window.web3 = new Web3(window.web3.currentProvider)
+  //     console.log("hallo")
+  //   }
+  //   else {
+  //     window.alert('Non-Ethereum browser detected. You should consider trying celo Extension wallet!')
+  //     console.log("Hello")
+  //   }
+  // }
 
   async loadBlockchainData() {
-    const web3 = window.web3
+    // const web3 = window.web3
     // Load account
-    console.log("HE::P")
-    // console.log(ContractKit)
+    const web3 = new Web3(window.celo)
     kit = ContractKit.newKitFromWeb3(web3)
     // console.log(kit)
-    const accounts = await kit.web3.eth.getAccounts()
+    // const accounts = await kit.web3.eth.getAccounts()
     // console.log(accounts)
-    kit.defaultAccount = accounts[0]
-    this.setState({ account: accounts[0] })
-    console.log(kit.defaultAccount)
+    // kit.defaultAccount = accounts[0]
+    // this.setState({ account: accounts[0] })
+    // console.log(this.state.account)
+    // console.log(kit.defaultAccount)
     // Network ID
     const networkId = await kit.web3.eth.net.getId()
     console.log(networkId)
@@ -224,7 +229,7 @@ class App extends Component {
       <div>
         <Navbar account={this.state.account} />
         { this.state.loading
-          ? <div id="loader" className="text-center mt-5"><p>Loading...</p><button onClick={this.connectCeloWallet} type="submit">Submit</button></div>
+          ? <div id="loader" className="text-center mt-5"><p>Loading...</p></div>
           
           : <Main
               images={this.state.images}
