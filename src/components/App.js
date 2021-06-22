@@ -172,15 +172,20 @@ class App extends Component {
   async getBalance() {
     const totalBalance = await kit.getTotalBalance(kit.defaultAccount)
     const cUSDBalance = totalBalance.cUSD.shiftedBy(-ERC20_DECIMALS).toFixed(2)
-    document.querySelector("#balance").textContent = cUSDBalance
+    // document.querySelector("#balance").textContent = cUSDBalance
   }
 
   async send() {
+    let celoAddress = document.getElementById("addr").value
+    let sendamount
+    const web3 = new Web3(window.celo)
+    // sendamount = document.getElementById("amt").value
+    sendamount = web3.utils.toWei(sendamount, 'ether');
+    console.log(sendamount)
     const result = await cUSDcontract.methods
-      .transfer(anAddress, amount)
+      .transfer(celoAddress, sendamount)
       .send({ from: kit.defaultAccount })
-    // getBalance()
-    // showTxHash(result.transactionHash) 
+    
     return result
   }
 
@@ -215,12 +220,30 @@ class App extends Component {
     })
   }
 
-  tipImageOwner(id, tipAmount) {
+  // tipImageOwner(id, tipAmount) {
+  //   this.setState({ loading: true })
+  //   this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
+  //     this.setState({ loading: false })
+  //   })
+  // }
+
+  async tipImageOwner(id, tipAmount) {
     this.setState({ loading: true })
-    this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-      this.setState({ loading: false })
-    })
-  }
+    let celoAddress = document.getElementById("addr").value
+    let sendamount
+    const web3 = new Web3(window.celo)
+    // sendamount = document.getElementById("amt").value
+    sendamount = web3.utils.toWei(sendamount, 'ether');
+    console.log(sendamount)
+    const result = await cUSDcontract.methods
+      .transfer(celoAddress, sendamount)
+      .send({ from: kit.defaultAccount })
+    
+    return result
+    // this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
+    this.setState({ loading: false })
+    }
+  
 
   
 
