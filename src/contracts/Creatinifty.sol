@@ -58,7 +58,7 @@ contract Creatinifty {
     Image memory _image = images[_id];
     // Fetch the author
     address payable _author = _image.author;
-    // Pay the author by sending them Ether
+    // Pay the author by sending them Celo
     payable(address(_author)).transfer(msg.value);
     // Increment the tip amount
     _image.tipAmount = _image.tipAmount + msg.value;

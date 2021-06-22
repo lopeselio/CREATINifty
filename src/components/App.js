@@ -228,6 +228,7 @@ class App extends Component {
   // }
 
   async tipImageOwner(id, tipAmount) {
+    console.log(id)
     this.setState({ loading: true })
     let celoAddress = document.getElementById("addr").value
     let sendamount

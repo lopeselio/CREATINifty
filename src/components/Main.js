@@ -59,6 +59,7 @@ class Main extends Component {
                             let tipAmount = window.web3.utils.toWei('2', 'ether')
                             console.log(event.target.name, tipAmount)
                             this.props.tipImageOwner(event.target.name, tipAmount)
+                            // console.log(image.id)
                           }}
                         >
                           TIP 2 CELO
