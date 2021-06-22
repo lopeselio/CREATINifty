@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Identicon from 'identicon.js';
+const Web3 = require("web3")
 
 class Main extends Component {
 
@@ -49,18 +50,18 @@ class Main extends Component {
                       </li>
                       <li key={key} className="list-group-item py-2">
                         <small className="float-left mt-1 text-muted">
-                          TIPS: {window.web3.utils.fromWei(image.tipAmount.toString(), 'Ether')} ETH
+                          TIPS: {image.tipAmount} CELO
                         </small>
                         <button
                           className="btn btn-link btn-sm float-right pt-0"
                           name={image.id}
                           onClick={(event) => {
-                            let tipAmount = window.web3.utils.toWei('0.1', 'Ether')
+                            let tipAmount = window.web3.utils.toWei('2', 'ether')
                             console.log(event.target.name, tipAmount)
                             this.props.tipImageOwner(event.target.name, tipAmount)
                           }}
                         >
-                          TIP 0.1 ETH
+                          TIP 2 CELO
                         </button>
                       </li>
                     </ul>
