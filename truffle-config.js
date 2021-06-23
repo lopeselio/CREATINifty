@@ -58,10 +58,10 @@ const Url = process.env.RPC_URL
       network_id: 44787
     },
      alfajores_network: {
-      provider: function () {
-        return new HDWalletProvider(PRIVATE_KEY, Url)
-      },
-      //  provider: kit.web3.currentProvider, // CeloProvider
+      // provider: function () {
+      //   return new HDWalletProvider(PRIVATE_KEY, Url)
+      // },
+       provider: kit.web3.currentProvider, // CeloProvider
        network_id: 44787                   // latest Alfajores network id
      }
    },

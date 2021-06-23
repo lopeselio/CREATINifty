@@ -102,13 +102,6 @@ class App extends Component {
     // Load account
     const web3 = new Web3(window.celo)
     kit = ContractKit.newKitFromWeb3(web3)
-    // console.log(kit)
-    // const accounts = await kit.web3.eth.getAccounts()
-    // console.log(accounts)
-    // kit.defaultAccount = accounts[0]
-    // this.setState({ account: accounts[0] })
-    // console.log(this.state.account)
-    // console.log(kit.defaultAccount)
     // Network ID
     const networkId = await kit.web3.eth.net.getId()
     console.log(networkId)
@@ -175,15 +168,16 @@ class App extends Component {
     // document.querySelector("#balance").textContent = cUSDBalance
   }
 
-  async send() {
+  async send(id, tipAmount) {
     let celoAddress = document.getElementById("addr").value
-    let sendamount
+    // let celoAddress = 
+    // let tipAmount
     const web3 = new Web3(window.celo)
     // sendamount = document.getElementById("amt").value
-    sendamount = web3.utils.toWei(sendamount, 'ether');
-    console.log(sendamount)
+    tipAmount = web3.utils.toWei(tipAmount, 'ether');
+    console.log(tipAmount)
     const result = await cUSDcontract.methods
-      .transfer(celoAddress, sendamount)
+      .transfer(celoAddress, tipAmount)
       .send({ from: kit.defaultAccount })
     
     return result
@@ -220,30 +214,30 @@ class App extends Component {
     })
   }
 
-  // tipImageOwner(id, tipAmount) {
-  //   this.setState({ loading: true })
-  //   this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-  //     this.setState({ loading: false })
-  //   })
-  // }
-
-  async tipImageOwner(id, tipAmount) {
-    console.log(id)
+  tipImageOwner(id, tipAmount) {
     this.setState({ loading: true })
-    let celoAddress = document.getElementById("addr").value
-    let sendamount
-    const web3 = new Web3(window.celo)
-    // sendamount = document.getElementById("amt").value
-    sendamount = web3.utils.toWei(sendamount, 'ether');
-    console.log(sendamount)
-    const result = await cUSDcontract.methods
-      .transfer(celoAddress, sendamount)
-      .send({ from: kit.defaultAccount })
+    this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
+      this.setState({ loading: false })
+    })
+  }
+
+  // async tipImageOwner(id, tipAmount) {
+  //   console.log(id)
+  //   this.setState({ loading: true })
+  //   let celoAddress = document.getElementById("addr").value
+  //   let sendamount
+  //   const web3 = new Web3(window.celo)
+  //   // sendamount = document.getElementById("amt").value
+  //   sendamount = web3.utils.toWei(sendamount, 'ether');
+  //   console.log(sendamount)
+  //   const result = await cUSDcontract.methods
+  //     .transfer(celoAddress, sendamount)
+  //     .send({ from: kit.defaultAccount })
     
-    return result
-    // this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
-    this.setState({ loading: false })
-    }
+  //   return result
+  //   // this.state.creatinifty.methods.tipImageOwner(id).send({ from: this.state.account, value: tipAmount }).on('transactionHash', (hash) => {
+  //   this.setState({ loading: false })
+  //   }
   
 
   
